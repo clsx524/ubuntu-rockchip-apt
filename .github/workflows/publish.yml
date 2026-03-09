@@ -1,0 +1,57 @@
+name: Publish apt repository
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'pool/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d | gpg --import
+          echo "${{ secrets.GPG_KEY_ID }}:6:" | gpg --import-ownertrust
+
+      - name: Generate apt metadata
+        run: |
+          sudo apt-get install -y apt-utils
+          for suite_dir in dists/*/; do
+            suite="${suite_dir%/}"
+            suite="${suite##*/}"
+            for comp_dir in "${suite_dir}"*/; do
+              comp="${comp_dir%/}"
+              comp="${comp##*/}"
+              for arch_dir in "${comp_dir}"binary-*/; do
+                [ -d "${arch_dir}" ] || continue
+                arch="${arch_dir%/}"
+                arch="${arch##*binary-}"
+                apt-ftparchive packages "${arch_dir}" > "${arch_dir}Packages"
+                gzip -k -f "${arch_dir}Packages"
+              done
+            done
+            apt-ftparchive -c "conf/${suite}-release" release "${suite_dir}" > "${suite_dir}Release"
+            gpg --batch --yes -abs -o "${suite_dir}Release.gpg" "${suite_dir}Release"
+            gpg --batch --yes --clearsign -o "${suite_dir}InRelease" "${suite_dir}Release"
+          done
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
