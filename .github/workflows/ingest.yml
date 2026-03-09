@@ -27,17 +27,19 @@ jobs:
         run: |
           PKGNAME=$(dpkg-deb --field /tmp/pkg.deb Package)
           ARCH=$(dpkg-deb --field /tmp/pkg.deb Architecture)
+          VERSION=$(dpkg-deb --field /tmp/pkg.deb Version)
           SUITE="${{ inputs.suite }}"
+          FILENAME="${PKGNAME}_${VERSION}_${ARCH}.deb"
 
           # Pool path (for organisation)
           POOL="pool/${SUITE}/main/${PKGNAME:0:1}/${PKGNAME}"
           mkdir -p "${POOL}"
-          cp /tmp/pkg.deb "${POOL}/"
+          cp /tmp/pkg.deb "${POOL}/${FILENAME}"
 
           # Dists path (for apt-ftparchive to scan)
           DISTS="dists/${SUITE}/main/binary-${ARCH}"
           mkdir -p "${DISTS}"
-          cp /tmp/pkg.deb "${DISTS}/"
+          cp /tmp/pkg.deb "${DISTS}/${FILENAME}"
 
       - name: Commit
         run: |
