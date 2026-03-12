@@ -3,6 +3,6 @@ APT::FTPArchive::Release::Label "Ubuntu Rockchip";
 APT::FTPArchive::Release::Suite "questing";
 APT::FTPArchive::Release::Codename "questing";
 APT::FTPArchive::Release::Version "25.10";
-APT::FTPArchive::Release::Architectures "arm64";
+APT::FTPArchive::Release::Architectures "arm64 all";
 APT::FTPArchive::Release::Components "main";
 APT::FTPArchive::Release::Description "Ubuntu Rockchip packages for Questing Quokka (25.10)";
