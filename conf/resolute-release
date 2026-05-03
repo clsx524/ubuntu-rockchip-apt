@@ -1,0 +1,8 @@
+APT::FTPArchive::Release::Origin "Ubuntu Rockchip";
+APT::FTPArchive::Release::Label "Ubuntu Rockchip";
+APT::FTPArchive::Release::Suite "resolute";
+APT::FTPArchive::Release::Codename "resolute";
+APT::FTPArchive::Release::Version "26.04";
+APT::FTPArchive::Release::Architectures "arm64 all";
+APT::FTPArchive::Release::Components "main";
+APT::FTPArchive::Release::Description "Ubuntu Rockchip packages for Resolute Raccoon (26.04)";

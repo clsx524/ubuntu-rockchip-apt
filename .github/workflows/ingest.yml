@@ -9,7 +9,7 @@ on:
       suite:
         description: 'Suite (e.g. questing)'
         required: true
-        default: 'questing'
+        default: 'resolute'
 
 jobs:
   ingest:
