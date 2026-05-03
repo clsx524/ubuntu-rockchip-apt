@@ -37,7 +37,13 @@ jobs:
           cp /tmp/pkg.deb "${POOL}/${FILENAME}"
 
           # Dists path (for apt-ftparchive to scan)
-          DISTS="dists/${SUITE}/main/binary-${ARCH}"
+          # Treat 'all' architecture packages as 'arm64' so they get indexed correctly 
+          # for the arm64 builder (since this repo primarily supports arm64).
+          DISTS_ARCH="${ARCH}"
+          if [ "${DISTS_ARCH}" = "all" ]; then
+            DISTS_ARCH="arm64"
+          fi
+          DISTS="dists/${SUITE}/main/binary-${DISTS_ARCH}"
           mkdir -p "${DISTS}"
           cp /tmp/pkg.deb "${DISTS}/${FILENAME}"
 
